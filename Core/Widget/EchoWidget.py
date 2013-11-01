@@ -36,7 +36,6 @@ class EchoWidget(QWidget):
 
     def PlayAFrame(self, echoFileName):
         echoFile = open(echoFileName, "r", encoding = "utf8")
-        print("EchoWidget,准备编写回波放映")
 
         # 偏移到 本帧处
         echoSetStrs = self.ReadAFrame(echoFile)
