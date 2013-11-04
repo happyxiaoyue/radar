@@ -7,6 +7,8 @@ from PyQt4.QtGui import QBrush
 from PyQt4.QtGui import QColor
 from PyQt4.QtGui import QWidget 
 
+from PyQt4.QtCore import QPoint
+
 import sys,os
 gRootDir = os.path.join(os.getcwd(), "..", "..")
 sys.path.append(gRootDir)
@@ -22,6 +24,11 @@ class EchoWidget(QWidget):
         QWidget.__init__(self, parent)
         self.setFixedSize(600, 600)
         self.mEchoSet = EchoSet()
+
+        center = QPoint(600 / 2, 600 /2)        # 绘制的圆心
+        radius = 600 / 2                        # 绘制半径
+        self.mEchoSet.SetCenter(center)
+        self.mEchoSet.SetRadius(radius)
 
     def paintEvent(self, event): 
         brush = QBrush(QColor(0, 0, 0));

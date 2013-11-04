@@ -3,12 +3,6 @@
 
 from Core.Protocol.EchoLineProtocol import EchoLineProtocol
 
-import sys,os
-gRootDir = os.path.join(os.getcwd(), "..", "..")
-sys.path.append(gRootDir)
-from cfg import gEchoLineCountAFrame
-gEchoLineCountAFrame = 2048
-
 class EchoLine():
     """
     回波线内部格式为字典:
@@ -32,9 +26,20 @@ class EchoLine():
 
         self.mData[strength].append(posPair)
 
+    def Draw(self, p, center, radius, angle):
+        for strength in self.mData:
+            for seg in self.mData[strength]:
+                start = seg[0]
+                end = seg[1]
+                #print(strength)
+                #print(start)
+                #print(end)
+
+
     def Print(self):
         #print(self.mData)
         print(gEchoLineCountAFrame)
+
 
 if __name__ == "__main__":
     print("EchoLine 没有测试")
