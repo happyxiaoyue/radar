@@ -24,6 +24,7 @@ class EchoSet(QWidget):
         for echoStr in echoSetStrs:
             echoLine = EchoLine(echoStr)
             self.mEchoLines.append(echoLine)
+        self.update()
 
     def SetCenter(self, center):
         self.mCenter = center;
@@ -33,6 +34,8 @@ class EchoSet(QWidget):
         pen = QPen(QColor(255, 255, 255))
         p.setPen(pen)
         p.drawText(50, 50, "Draw")
+
+        self.__DrawEchoLines(p)
 
         self.__DrawDisCircle(p)
         self.__DrawRangeCicle(p)
@@ -66,6 +69,15 @@ class EchoSet(QWidget):
         pen = QPen(QColor(255, 255, 0))
         p.setPen(pen)
         p.drawText(450, 450, "__DrawSysInfo")
+
+    # 绘制回波
+    def __DrawEchoLines(self, p):
+        i = 0
+        for echoLine in self.mEchoLines:
+            print(str(i) + ":")
+            echoLine.Print()
+            #echoLine.Draw(p, i,)
+            i += 1
 
 if __name__ == "__main__":
     import sys

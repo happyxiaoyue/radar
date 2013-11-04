@@ -39,7 +39,6 @@ class EchoWidget(QWidget):
 
         # 偏移到 本帧处
         echoSetStrs = self.ReadAFrame(echoFile)
-        print(len(echoSetStrs))
         self.mEchoSet.SetData(echoSetStrs)
 
         echoFile.close()

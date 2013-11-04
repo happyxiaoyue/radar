@@ -3,6 +3,12 @@
 
 from Core.Protocol.EchoLineProtocol import EchoLineProtocol
 
+import sys,os
+gRootDir = os.path.join(os.getcwd(), "..", "..")
+sys.path.append(gRootDir)
+from cfg import gEchoLineCountAFrame
+gEchoLineCountAFrame = 2048
+
 class EchoLine():
     """
     回波线内部格式为字典:
@@ -25,6 +31,10 @@ class EchoLine():
             self.mData[strength] = []
 
         self.mData[strength].append(posPair)
+
+    def Print(self):
+        #print(self.mData)
+        print(gEchoLineCountAFrame)
 
 if __name__ == "__main__":
     print("EchoLine 没有测试")
