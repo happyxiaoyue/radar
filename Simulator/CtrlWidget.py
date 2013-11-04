@@ -5,6 +5,7 @@ from PyQt4.QtGui import QApplication
 from PyQt4.QtGui import QVBoxLayout
 from PyQt4.QtGui import QHBoxLayout
 from PyQt4.QtGui import QPushButton
+from PyQt4.QtGui import QSizePolicy
 from PyQt4.QtGui import QGroupBox
 from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QLabel
@@ -48,6 +49,8 @@ class CtrlWidget(QWidget):
         self.mLayout.addLayout(self.mButtonLayout)
 
         self.setLayout(self.mLayout)
+
+        self.setMaximumWidth(300)
 
         self.mPlayAFrameButton.clicked.connect(self.PlayAFrameButtonSlot)
 

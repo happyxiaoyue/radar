@@ -25,7 +25,7 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     win = RadarTool()
-    win.show()
+    win.showMaximized()
 
     sys.exit(app.exec_())
 

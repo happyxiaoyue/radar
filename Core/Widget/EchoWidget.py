@@ -6,6 +6,7 @@ from PyQt4.QtGui import QPainter
 from PyQt4.QtGui import QBrush
 from PyQt4.QtGui import QColor
 from PyQt4.QtGui import QWidget 
+from PyQt4.QtGui import QSizePolicy
 
 from PyQt4.QtCore import QPoint
 
@@ -21,8 +22,10 @@ class EchoWidget(QWidget):
     mFrameIndex = 0                    # 用于记录当前放映的帧编号
 
     def __init__(self, parent=None):
-        QWidget.__init__(self, parent)
-        self.setMinimumSize(600, 600)
+        QWidget.__init__(self, parent) 
+        self.setMinimumSize(200,200)
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.setSizePolicy(sizePolicy)
         self.mEchoSet = EchoSet()
 
         center = QPoint(self.width() / 2, self.height() / 2)        # 绘制的圆心

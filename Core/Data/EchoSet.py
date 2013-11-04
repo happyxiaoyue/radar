@@ -32,7 +32,7 @@ class EchoSet(QWidget):
         self.SetRadius(0)
         self.SetRange("50m")
         self.SetHdt(0)
-        
+
         # 制作回波线角度表，用于提升性能
         step = 2.0 * gPI / gEchoLineCountAFrame
         self.mCosAngleTable = []
@@ -70,7 +70,7 @@ class EchoSet(QWidget):
 
     # 绘制
     def Draw(self, p):
-        # self.__DrawEchoLines(p)
+        self.__DrawEchoLines(p)
         self.__DrawShipHeadLine(p)
         self.__DrawDisCircle(p)
         self.__DrawRangeCicle(p)
@@ -80,7 +80,7 @@ class EchoSet(QWidget):
     def __DrawRangeCicle(self, p):
         pen = QPen(QColor(0, 255, 0))
         p.setPen(pen)
-    
+
     # 绘制距标圈
     def __DrawDisCircle(self, p):
         pen = QPen(QColor(0, 150, 0))
@@ -119,7 +119,7 @@ class EchoSet(QWidget):
         for echoLine in self.mEchoLines:
             # TODO: 使用查表法 提速
             cosAngle = self.mCosAngleTable[i]
-            sinAngle = self.mSinAngleTable[i] 
+            sinAngle = self.mSinAngleTable[i]
             echoLine.Draw(p, self.mCenter, self.mRadius, cosAngle, sinAngle, self.mRange, self.mPrecision)
             print(str(i) + ":")
             #print(cosAngle)
