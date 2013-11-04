@@ -51,6 +51,7 @@ class EchoWidget(QWidget):
 
         echoFile.close()
         self.mFrameIndex += 1
+        self.update()
 
     def ReadAFrame(self, f):
         data = []

@@ -41,7 +41,6 @@ class EchoSet(QWidget):
         for echoStr in echoSetStrs:
             echoLine = EchoLine(echoStr)
             self.mEchoLines.append(echoLine)
-        self.update()
 
     def SetCenter(self, center):
         self.mCenter = center;
