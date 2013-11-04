@@ -3,6 +3,7 @@
 
 gEchoLineCountAFrame = 2048
 gPI = 3.1415926
+gRadarEchoScale = 0.8
 
 gRangeTable = {
     "50m":      (50,    0.12),

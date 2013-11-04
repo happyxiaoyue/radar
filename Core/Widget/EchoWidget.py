@@ -22,14 +22,29 @@ class EchoWidget(QWidget):
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
-        self.setFixedSize(600, 600)
+        self.setMinimumSize(600, 600)
         self.mEchoSet = EchoSet()
 
-        center = QPoint(600 / 2, 600 /2)        # 绘制的圆心
-        radius = 600 / 2                        # 绘制半径
+        center = QPoint(self.width() / 2, self.height() / 2)        # 绘制的圆心
+        radius = 0                                                  # 绘制的半径
+        if self.width() < self.height():
+            radius = self.width()
+        radius = self.height()
+        radius /= 2
+
         self.mEchoSet.SetCenter(center)
         self.mEchoSet.SetRadius(radius)
         self.mEchoSet.SetRange("3nm")
+
+    def resizeEvent(self, event):
+        center = QPoint(self.width() / 2, self.height() / 2)        # 绘制的圆心
+        radius = 0                                                  # 绘制的半径
+        if self.width() < self.height():
+            radius = self.width()
+        radius = self.height()
+        radius /= 2
+        self.mEchoSet.SetCenter(center)
+        self.mEchoSet.SetRadius(radius)
 
     def paintEvent(self, event): 
         brush = QBrush(QColor(0, 0, 0));
