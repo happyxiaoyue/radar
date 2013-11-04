@@ -29,6 +29,7 @@ class EchoWidget(QWidget):
         radius = 600 / 2                        # 绘制半径
         self.mEchoSet.SetCenter(center)
         self.mEchoSet.SetRadius(radius)
+        self.mEchoSet.SetRange("3nm")
 
     def paintEvent(self, event): 
         brush = QBrush(QColor(0, 0, 0));

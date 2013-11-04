@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 # -- coding utf-8 --
 
+import math
+
+from PyQt4.QtGui import QPen
+from PyQt4.QtGui import QColor
+
 from Core.Protocol.EchoLineProtocol import EchoLineProtocol
 
 class EchoLine():
@@ -10,8 +15,8 @@ class EchoLine():
     强度2: [ (起点21, 终点21), (起点22, 终点22), (起点23, 终点23), …… ]
     ……
     """
-    mData = {}
     def __init__(self, echoLineStr):
+        self.mData = {}
         echoLineProtocol = EchoLineProtocol(self)
         echoLineProtocol.ParseEchoLine(echoLineStr)
 
@@ -26,19 +31,31 @@ class EchoLine():
 
         self.mData[strength].append(posPair)
 
-    def Draw(self, p, center, radius, angle):
+    def Draw(self, p, center, radius, cosAngle, sinAngle, radarRange, precision):
+        pointAEchoLine = radarRange / precision
+        rStep = radius / pointAEchoLine
         for strength in self.mData:
+            assert 0 <= strength <= 255, "强度值必须在0,255之间"
             for seg in self.mData[strength]:
                 start = seg[0]
                 end = seg[1]
-                #print(strength)
-                #print(start)
-                #print(end)
 
+                rStart = rStep * start
+                xStart = int(rStart * cosAngle + center.x())
+                yStart = int(rStart * sinAngle + center.y())
+
+                rEnd = rStep * end
+                xEnd = int(rEnd * cosAngle + center.x())
+                yEnd = int(rEnd * sinAngle+ center.y())
+                
+                # TODO: 使用彩色
+                pen = QPen(QColor(0, strength, 0))
+                p.setPen(pen)
+                p.drawLine(xStart, yStart, xEnd, yEnd)
+                #print("%d:(%f, %f) => (%f, %f)" % (strength, xStart, yStart, xEnd, yEnd))
 
     def Print(self):
-        #print(self.mData)
-        print(gEchoLineCountAFrame)
+        print(self.mData)
 
 
 if __name__ == "__main__":

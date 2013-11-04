@@ -9,12 +9,15 @@ from PyQt4.QtGui import QPainter
 
 from PyQt4.QtCore import QPoint
 
+import math
+
 import sys,os
 gRootDir = os.path.join(os.getcwd(), "..", "..")
 sys.path.append(gRootDir)
 from Core.Data.EchoLine import EchoLine
 from cfg import gEchoLineCountAFrame
 from cfg import gPI
+from cfg import gRangeTable
 
 class EchoSet(QWidget):
     def __init__(self, parent=None):
@@ -25,11 +28,14 @@ class EchoSet(QWidget):
         
         # 制作回波线角度表，用于提升性能
         step = 2.0 * gPI / gEchoLineCountAFrame
-        self.mAngleTable = []
+        self.mCosAngleTable = []
+        self.mSinAngleTable = []
         for i in range(0, gEchoLineCountAFrame):
-            self.mAngleTable.append(0)
+            self.mCosAngleTable.append(0)
+            self.mSinAngleTable.append(0)
         for i in range(0, gEchoLineCountAFrame):
-            self.mAngleTable[i] = i * step
+            self.mCosAngleTable[i] = math.cos(i * step)
+            self.mSinAngleTable[i] = math.sin(i * step)
 
     def SetData(self, echoSetStrs):
         for echoStr in echoSetStrs:
@@ -42,6 +48,12 @@ class EchoSet(QWidget):
 
     def SetRadius(self, radius):
         self.mRadius = radius;
+
+    def SetRange(self, radarRange):
+        assert radarRange in gRangeTable, "量程表中没有量程:" + radarRange
+        self.mRangeName = radarRange
+        self.mRange = gRangeTable[radarRange][0]
+        self.mPrecision = gRangeTable[radarRange][1]
 
     # 回波绘制
     def Draw(self, p):
@@ -62,9 +74,9 @@ class EchoSet(QWidget):
         
     # 绘制量程范围
     def __DrawRangeCicle(self, p):
-        pen = QPen(QColor(255, 0, 0))
+        pen = QPen(QColor(0, 255, 0))
         p.setPen(pen)
-        p.drawText(150, 150, "__DrawRangeCicle")
+        p.drawText(20, 20, self.mRangeName)
     
     # 绘制距标圈
     def __DrawDisCircle(self, p):
@@ -87,11 +99,15 @@ class EchoSet(QWidget):
     # 绘制回波
     def __DrawEchoLines(self, p):
         i = 0
-        angle = 0
         for echoLine in self.mEchoLines:
             # TODO: 使用查表法 提速
-            angle = self.mAngleTable[i]
-            echoLine.Draw(p, self.mCenter, self.mRadius, angle)
+            cosAngle = self.mCosAngleTable[i]
+            sinAngle = self.mSinAngleTable[i]
+            echoLine.Draw(p, self.mCenter, self.mRadius, cosAngle, sinAngle, self.mRange, self.mPrecision)
+            print(str(i) + ":")
+            #print(cosAngle)
+            #print(sinAngle)
+            #print()
             i += 1
 
 if __name__ == "__main__":
