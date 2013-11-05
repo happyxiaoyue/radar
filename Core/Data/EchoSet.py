@@ -104,7 +104,28 @@ class EchoSet(QWidget):
         xEnd = int(self.mRadius * math.cos(self.mHdt - gPI / 2) + xStart)
         yEnd = int(self.mRadius * math.sin(self.mHdt - gPI / 2) + yStart)
 
-        p.drawLine(xStart, yStart, xEnd, yEnd)
+        p.drawLine(xStart, yStart, xEnd, yEnd) 
+
+        brush = QBrush(QColor(255, 255, 255), Qt::SolidPattern);
+        p->setBrush(brush);
+        
+        """
+        double ang = angle - 30 * DI_1_DEG;
+        cos_a = cos(ang);
+        sin_a = sin(ang);
+        double x1 = x_end + SHIP_LEGEND_LEN * cos_a;
+        double y1 = y_end - SHIP_LEGEND_LEN* sin_a;
+        ang = angle + 30 * DI_1_DEG;
+        cos_a = cos(ang);
+        sin_a = sin(ang);
+        double x2 = x_end + SHIP_LEGEND_LEN * cos_a;
+        double y2 = y_end - SHIP_LEGEND_LEN* sin_a;
+        QPointF ptx[3];
+        ptx[0].setX(x1);   ptx[0].setY(y1);
+        ptx[1].setX(x2);   ptx[1].setY(y2);
+        ptx[2].setX(x_end); ptx[2].setY(y_end);
+        p->drawPolygon( ptx, 3);
+        """
 
     # 绘制系统信息
     def __DrawSysInfo(self, p):
