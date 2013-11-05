@@ -64,12 +64,6 @@ class EchoWidget(QWidget):
         self.mEchoSet.Draw(painterToPixmap)
 
         painter = QPainter(self)
-        """
-        brush = QBrush(QColor(0, 0, 0));
-        # TODO: 删除清屏
-        painter.setBrush(brush)
-        painter.drawRect(0, 0, self.width(), self.height())
-        """
         painter.drawPixmap(0, 0, self.width(), self.height(), self.mPixmap)
 
     def PlayAFrame(self, echoFileName):
@@ -82,7 +76,7 @@ class EchoWidget(QWidget):
         echoFile.close()
         self.mFrameIndex += 1 
         
-        for i in range(0, gEchoLineCountAFrame):
+        while True:
             self.repaint()
 
     def ReadAFrame(self, f):

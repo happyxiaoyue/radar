@@ -15,7 +15,7 @@ class EchoLine():
     强度2: [ (起点21, 终点21), (起点22, 终点22), (起点23, 终点23), …… ]
     ……
     """
-    def __init__(self, echoLineStr):
+    def __init__(self, echoLineStr): 
         self.mData = {}
         echoLineProtocol = EchoLineProtocol(self)
         echoLineProtocol.ParseEchoLine(echoLineStr)
@@ -31,7 +31,7 @@ class EchoLine():
 
         self.mData[strength].append(posPair)
 
-    def Draw(self, p, center, radius, cosAngle, sinAngle, radarRange, precision):
+    def Draw(self, p, center, radius, cosAngle, sinAngle, radarRange, precision): 
         pointAEchoLine = radarRange / precision
         rStep = radius / pointAEchoLine
         for strength in self.mData:

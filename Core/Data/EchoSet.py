@@ -150,6 +150,7 @@ class EchoSet(QWidget):
 
     # 绘制回波
     def __DrawAEchoLine(self, p, i):
+        self.__DrawShadeLine(p, i)
         echoLinsCount = len(self.mEchoLines)
         if 0 == echoLinsCount:
             return
@@ -159,7 +160,19 @@ class EchoSet(QWidget):
         cosAngle = self.mCosAngleTable[i]
         sinAngle = self.mSinAngleTable[i]
         echoLine = self.mEchoLines[i]
+
         echoLine.Draw(p, self.mCenter, self.mRadius, cosAngle, sinAngle, self.mRange, self.mPrecision)
+
+    # 清除回波线上的上一帧数据
+    def __DrawShadeLine(self,p, i):
+        pen = QPen(QColor(0, 0, 0))
+        p.setPen(pen)
+        angle = i / gEchoLineCountAFrame * 2 * gPI - 90 * g1Deg
+        xStart = int(self.mCenter.x())
+        yStart = int(self.mCenter.y())
+        xEnd = int(self.mRadius * math.cos(angle) + xStart)
+        yEnd = int(self.mRadius * math.sin(angle) + yStart)
+        p.drawLine(xStart, yStart, xEnd, yEnd) 
 
     def __DrawCircle(self, p, center, r):
         x = center.x() - r
