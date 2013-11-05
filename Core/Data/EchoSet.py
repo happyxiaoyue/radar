@@ -138,7 +138,6 @@ class EchoSet(QWidget):
         p1 = QPointF(xEnd, yEnd)
         p2 = QPointF(x1, y1)
         p3 = QPointF(x2, y2)
-
         p.drawPolygon(p1, p2, p3);
         
     # 绘制系统信息
