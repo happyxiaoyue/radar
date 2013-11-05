@@ -6,8 +6,11 @@ from PyQt4.QtGui import QPainter
 from PyQt4.QtGui import QBrush
 from PyQt4.QtGui import QColor
 from PyQt4.QtGui import QWidget 
+from PyQt4.QtGui import QPalette
+from PyQt4.QtGui import QPixmap
 from PyQt4.QtGui import QSizePolicy
 
+from PyQt4.QtCore import Qt
 from PyQt4.QtCore import QPoint
 
 import sys,os
@@ -23,9 +26,13 @@ class EchoWidget(QWidget):
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent) 
+        
         self.setMinimumSize(200,200)
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.setSizePolicy(sizePolicy)
+
+        self.mPixmap = QPixmap(self.width(), self.height())
+        self.mPixmap.fill(Qt.black)
         self.mEchoSet = EchoSet()
 
         center = QPoint(self.width() / 2, self.height() / 2)        # 绘制的圆心
@@ -48,17 +55,22 @@ class EchoWidget(QWidget):
         radius /= 2
         self.mEchoSet.SetCenter(center)
         self.mEchoSet.SetRadius(radius)
+        self.mPixmap = QPixmap(self.width(), self.height())
+        self.mPixmap.fill(Qt.black)
 
     def paintEvent(self, event): 
-        brush = QBrush(QColor(0, 0, 0));
-        painter = QPainter(self)
+        # 回波绘制 绘制到后台缓存
+        painterToPixmap = QPainter(self.mPixmap)
+        self.mEchoSet.Draw(painterToPixmap)
 
+        painter = QPainter(self)
+        """
+        brush = QBrush(QColor(0, 0, 0));
         # TODO: 删除清屏
         painter.setBrush(brush)
         painter.drawRect(0, 0, self.width(), self.height())
-
-        # 回波绘制
-        self.mEchoSet.Draw(painter)
+        """
+        painter.drawPixmap(0, 0, self.width(), self.height(), self.mPixmap)
 
     def PlayAFrame(self, echoFileName):
         echoFile = open(echoFileName, "r", encoding = "utf8")
@@ -68,8 +80,10 @@ class EchoWidget(QWidget):
         self.mEchoSet.SetData(echoSetStrs)
 
         echoFile.close()
-        self.mFrameIndex += 1
-        self.update()
+        self.mFrameIndex += 1 
+        
+        for i in range(0, gEchoLineCountAFrame):
+            self.repaint()
 
     def ReadAFrame(self, f):
         data = []

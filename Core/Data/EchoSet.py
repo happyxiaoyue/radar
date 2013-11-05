@@ -5,9 +5,11 @@ from PyQt4.QtGui import QApplication
 from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QPen
 from PyQt4.QtGui import QColor
+from PyQt4.QtGui import QBrush
 from PyQt4.QtGui import QPainter
 
 from PyQt4.QtCore import QPoint
+from PyQt4.QtCore import QPointF
 from PyQt4.QtCore import Qt
 
 import math
@@ -20,6 +22,8 @@ from cfg import gEchoLineCountAFrame
 from cfg import gPI
 from cfg import gRangeTable
 from cfg import gRadarEchoScale
+from cfg import g1Deg
+from cfg import gShipLegendLen
 
 class EchoSet(QWidget):
     def __init__(self, parent=None):
@@ -27,6 +31,7 @@ class EchoSet(QWidget):
         self.mCenter = QPoint(0, 0)
         self.mRadius = 0
         self.mEchoLines = []
+        self.mEchoLinesIndex = 0
 
         self.SetCenter(QPoint(0,0))
         self.SetRadius(0)
@@ -41,8 +46,9 @@ class EchoSet(QWidget):
             self.mCosAngleTable.append(0)
             self.mSinAngleTable.append(0)
         for i in range(0, gEchoLineCountAFrame):
-            self.mCosAngleTable[i] = math.cos(i * step)
-            self.mSinAngleTable[i] = math.sin(i * step)
+            angle = i * step - 90 * g1Deg
+            self.mCosAngleTable[i] = math.cos(angle)
+            self.mSinAngleTable[i] = math.sin(angle)
 
     def SetData(self, echoSetStrs):
         for echoStr in echoSetStrs:
@@ -69,12 +75,17 @@ class EchoSet(QWidget):
         self.mHdt = 0
 
     # 绘制
-    def Draw(self, p):
-        self.__DrawEchoLines(p)
+    def Draw(self, p): 
+        self.__DrawAEchoLine(p, self.mEchoLinesIndex)
         self.__DrawShipHeadLine(p)
         self.__DrawDisCircle(p)
         self.__DrawRangeCicle(p)
         self.__DrawSysInfo(p)
+
+        self.mEchoLinesIndex += 1
+        indexMax = len(self.mEchoLines)
+        if self.mEchoLinesIndex == indexMax:
+            self.mEchoLinesIndex = 0 
 
     # 绘制量程范围
     def __DrawRangeCicle(self, p):
@@ -99,34 +110,37 @@ class EchoSet(QWidget):
         pen = QPen(QColor(255, 255, 255))
         p.setPen(pen)
 
+        angle = self.mHdt - 90 * g1Deg
+
         xStart = int(self.mCenter.x())
         yStart = int(self.mCenter.y())
-        xEnd = int(self.mRadius * math.cos(self.mHdt - gPI / 2) + xStart)
-        yEnd = int(self.mRadius * math.sin(self.mHdt - gPI / 2) + yStart)
+        xEnd = int(self.mRadius * math.cos(angle) + xStart)
+        yEnd = int(self.mRadius * math.sin(angle) + yStart)
 
         p.drawLine(xStart, yStart, xEnd, yEnd) 
 
-        brush = QBrush(QColor(255, 255, 255), Qt::SolidPattern);
-        p->setBrush(brush);
-        
-        """
-        double ang = angle - 30 * DI_1_DEG;
-        cos_a = cos(ang);
-        sin_a = sin(ang);
-        double x1 = x_end + SHIP_LEGEND_LEN * cos_a;
-        double y1 = y_end - SHIP_LEGEND_LEN* sin_a;
-        ang = angle + 30 * DI_1_DEG;
-        cos_a = cos(ang);
-        sin_a = sin(ang);
-        double x2 = x_end + SHIP_LEGEND_LEN * cos_a;
-        double y2 = y_end - SHIP_LEGEND_LEN* sin_a;
-        QPointF ptx[3];
-        ptx[0].setX(x1);   ptx[0].setY(y1);
-        ptx[1].setX(x2);   ptx[1].setY(y2);
-        ptx[2].setX(x_end); ptx[2].setY(y_end);
-        p->drawPolygon( ptx, 3);
-        """
+        brush = QBrush(QColor(255, 255, 255), Qt.SolidPattern);
+        p.setBrush(brush);
 
+        angle = self.mHdt + 90 * g1Deg
+        ang = angle - 30 * g1Deg;
+        cos_a = math.cos(ang);
+        sin_a = math.sin(ang);
+        x1 = xEnd + gShipLegendLen * cos_a;
+        y1 = yEnd - gShipLegendLen * sin_a;
+
+        ang = angle + 30 * g1Deg;
+        cos_a = math.cos(ang);
+        sin_a = math.sin(ang);
+        x2 = xEnd + gShipLegendLen * cos_a;
+        y2 = yEnd - gShipLegendLen * sin_a;
+
+        p1 = QPointF(xEnd, yEnd)
+        p2 = QPointF(x1, y1)
+        p3 = QPointF(x2, y2)
+
+        p.drawPolygon(p1, p2, p3);
+        
     # 绘制系统信息
     def __DrawSysInfo(self, p):
         pen = QPen(QColor(0, 255, 0))
@@ -135,18 +149,17 @@ class EchoSet(QWidget):
         p.drawText(2, 40, "船艏:" + str(self.mHdt) + "度")
 
     # 绘制回波
-    def __DrawEchoLines(self, p):
-        i = 0
-        for echoLine in self.mEchoLines:
-            # TODO: 使用查表法 提速
-            cosAngle = self.mCosAngleTable[i]
-            sinAngle = self.mSinAngleTable[i]
-            echoLine.Draw(p, self.mCenter, self.mRadius, cosAngle, sinAngle, self.mRange, self.mPrecision)
-            print(str(i) + ":")
-            #print(cosAngle)
-            #print(sinAngle)
-            #print()
-            i += 1
+    def __DrawAEchoLine(self, p, i):
+        echoLinsCount = len(self.mEchoLines)
+        if 0 == echoLinsCount:
+            return
+        assert i < echoLinsCount, "回波线索引越界"
+
+        # TODO: 使用查表法 提速
+        cosAngle = self.mCosAngleTable[i]
+        sinAngle = self.mSinAngleTable[i]
+        echoLine = self.mEchoLines[i]
+        echoLine.Draw(p, self.mCenter, self.mRadius, cosAngle, sinAngle, self.mRange, self.mPrecision)
 
     def __DrawCircle(self, p, center, r):
         x = center.x() - r

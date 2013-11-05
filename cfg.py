@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-gEchoLineCountAFrame = 2048
 gPI = 3.1415926
-gRadarEchoScale = 0.8
+g1Deg = gPI / 180
+
+gRadarEchoScale = 0.95
+gEchoLineCountAFrame = 2048
+gShipLegendLen = 10
 
 gRangeTable = {
     "50m":      (50,    0.12),
