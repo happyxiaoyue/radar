@@ -165,12 +165,14 @@ class EchoSet(QWidget):
     # 清除回波线上的上一帧数据
     def __DrawShadeLine(self,p, i):
         pen = QPen(QColor(0, 0, 0))
-        p.setPen(pen)
-        angle = i / gEchoLineCountAFrame * 2 * gPI - 90 * g1Deg
+
+        angle = i / gEchoLineCountAFrame * 2 * gPI - 90 * g1Deg + g1Deg
         xStart = int(self.mCenter.x())
         yStart = int(self.mCenter.y())
         xEnd = int(self.mRadius * math.cos(angle) + xStart)
         yEnd = int(self.mRadius * math.sin(angle) + yStart)
+
+        p.setPen(pen)
         p.drawLine(xStart, yStart, xEnd, yEnd) 
 
     def __DrawCircle(self, p, center, r):
